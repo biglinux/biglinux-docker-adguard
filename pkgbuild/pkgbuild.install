@@ -3,6 +3,12 @@ CURRENT_USER=$(who | awk 'NR==1{print $1}')
 
 # Executed after package installation
 post_install() {
+    # Check if the Docker/Adguard folder exists, otherwise create it
+    if [ ! -d /home/$CURRENT_USER/Docker/Adguard ]; then
+        echo "Creating Docker/Adguard folder..."
+        mkdir -p /home/$CURRENT_USER/Docker/Adguard
+    fi
+	
 	# Check if Docker is installed
 	if ! command -v docker >/dev/null 2>&1; then
 		echo "The Docker package is not installed. Please install it before continuing."
