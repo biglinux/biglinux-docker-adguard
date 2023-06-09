@@ -1,0 +1,60 @@
+version: "3.9" # Version of Docker Compose
+
+# Define the services to be created
+services:
+    # Name of the service
+    adguard:
+        # Name of the Docker container
+        container_name: adguard
+        # Domain name for the Docker container
+        domainname: docker
+        # Hostname for the Docker container
+        hostname: adguard
+        # Docker image to be used for the container
+        image: adguard/adguardhome:latest
+        # Define volumes to be mounted to the Docker container
+        volumes:
+            # Mount the host directory to the container directory for work
+            - ${HOME}/Docker/Adguard/work:/opt/adguardhome/work
+            # Mount the host directory to the container directory for configuration
+            - ${HOME}/Docker/Adguard/conf:/opt/adguardhome/conf
+        # Define environment variables for the Docker container
+        environment:
+        #  - ServerIP=198.168.0.100  # Server IP (Currently commented out)
+        #  - VIRTUAL_PORT=3000  # Virtual port (Currently commented out)
+        #  - TZ=America/Sao_Paulo  # Timezone (Currently commented out)
+        ports:
+            - 53:53/tcp
+            - 53:53/udp
+            #- "67:67/udp"
+            - 3030:3000/tcp
+        #network_mode: host
+        #cap_add:
+        #- NET_ADMIN
+        deploy:
+            resources:
+                limits:
+                    # Limits the CPU usage by the container to 0.5 cores.
+                    cpus: '0.5'
+                    # Limits the memory usage by the container to 2GB.
+                    memory: 2G
+        healthcheck:
+            # Checks the health of the container using curl to access port 8200.
+            test: ["CMD", "curl", "-f", "http://127.0.0.1:8200"]
+            # The interval between each health check.
+            interval: 30s
+            # The maximum amount of time a health check can take before it is considered a failure.
+            timeout: 10s
+            # The number of consecutive health check failures required for the container to be considered unhealthy.
+            retries: 6
+        # The restart policy of the container. "always" means the container will be restarted regardless of the exit status.
+        restart: always
+        networks:
+            # The Docker network to which the container will be connected.
+            big-net:
+            
+networks:
+    # Defines the network to be created.
+    big-net:
+        # The name to be assigned to the network.
+        name: big-net
