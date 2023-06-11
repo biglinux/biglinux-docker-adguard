@@ -8,14 +8,60 @@ post_install() {
         echo "Creating Docker/Adguard folder..."
         mkdir -p /home/$CURRENT_USER/Docker/Adguard
     fi
-	
-	# Check if Docker is installed
-	if ! command -v docker >/dev/null 2>&1; then
-		echo "The Docker package is not installed. Please install it before continuing."
-		exit 1
-	fi
+    
+    # Check if Docker is installed
+    if ! command -v docker >/dev/null 2>&1; then
+        echo "The Docker package is not installed. Please install it before continuing."
+        exit 1
+    fi
 
-	# Start the Adguard container using docker-compose
+    # Function to check if a port is available
+    is_port_available() {
+    local port=$1
+    if command -v netstat >/dev/null 2>&1; then
+        if netstat -tuln | grep ":$port " >/dev/null; then
+        return 1 # Port is in use
+        else
+        return 0 # Port is available
+        fi
+    else
+        return 2 # Unable to check port availability
+    fi
+    }
+
+    # Function to find an available port starting from a given port
+    find_available_port() {
+    local start_port=$1
+    local port=$start_port
+    local max_port=$((start_port + 100))
+    while [ $port -lt $max_port ]; do
+        if is_port_available "$port"; then
+        echo "$port"
+        return
+        fi
+        port=$((port + 1))
+    done
+    echo "No available ports found in the range $start_port-$max_port" >&2
+    exit 1
+    }
+
+    # Check if port 53 is available
+    if ! is_port_available 53; then
+    # Use port 5353 as an alternative if available
+    if is_port_available 5353; then
+        echo "Port 53 is in use. Using port 5353 as an alternative for the DNS server."
+        sed -i 's/53:53/tcp/5353:53/tcp/' /etc/docker-biglinux/adguard/docker-compose.yml
+        sed -i 's/53:53/5353:53/' /etc/docker-biglinux/adguard/docker-compose.yml
+    else
+        # Use port 6000 as a fallback
+        suggested_port=6000
+        echo "Both port 53 and 5353 are in use. Using port $suggested_port as an alternative for the DNS server."
+        sed -i 's/53:53/tcp/6000:53/tcp/' /etc/docker-biglinux/adguard/docker-compose.yml
+        sed -i 's/53:53/6000:53/' /etc/docker-biglinux/adguard/docker-compose.yml
+    fi
+    fi
+
+    # Start the Adguard container using docker-compose
     echo "Starting the Adguard container..."
 
     # Expand $CURRENT_USER and execute docker-compose with eval

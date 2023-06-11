@@ -2,7 +2,7 @@
 
 pkgname=biglinux-docker-adguard
 pkgdesc="AdGuard Home é um software para bloquear anúncios e filtrar conteúdo da web."
-depends=('biglinux-docker-config')
+depends=('biglinux-docker-config' 'net-tools')
 # makedepends=('')
 # conflicts=('')
 pkgver=$(date +%y.%m.%d)
