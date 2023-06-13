@@ -50,14 +50,15 @@ post_install() {
     # Use port 5353 as an alternative if available
     if is_port_available 5353; then
         echo "Port 53 is in use. Using port 5353 as an alternative for the DNS server."
-        sed -i 's/53:53/tcp/5353:53/tcp/' /etc/docker-biglinux/adguard/docker-compose.yml
-        sed -i 's/53:53/5353:53/' /etc/docker-biglinux/adguard/docker-compose.yml
+        sed -i 's/53:53\/tcp/5353:53\/tcp/' /etc/docker-biglinux/adguard/docker-compose.yml
+        sed -i 's/53:53\/udp/5353:53\/udp/' /etc/docker-biglinux/adguard/docker-compose.yml
+
     else
         # Use port 6000 as a fallback
         suggested_port=6000
         echo "Both port 53 and 5353 are in use. Using port $suggested_port as an alternative for the DNS server."
-        sed -i 's/53:53/tcp/6000:53/tcp/' /etc/docker-biglinux/adguard/docker-compose.yml
-        sed -i 's/53:53/6000:53/' /etc/docker-biglinux/adguard/docker-compose.yml
+        sed -i 's/53:53\/tcp/6000:53\/tcp/' /etc/docker-biglinux/adguard/docker-compose.yml
+        sed -i 's/53:53\/udp/6000:53\/udp/' /etc/docker-biglinux/adguard/docker-compose.yml
     fi
     fi
 

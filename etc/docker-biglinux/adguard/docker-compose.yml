@@ -23,9 +23,9 @@ services:
         #  - ServerIP=198.168.0.100  # Server IP (Currently commented out)
         #  - VIRTUAL_PORT=3000  # Virtual port (Currently commented out)
         #  - TZ=America/Sao_Paulo  # Timezone (Currently commented out)
-            ports:
-                - 53:53/tcp
-                - 53:53/udp
+        ports:
+            - 53:53/tcp
+            - 53:53/udp
             #- "67:67/udp"
             - 3030:3000/tcp
         #network_mode: host
