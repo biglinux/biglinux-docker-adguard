@@ -18,16 +18,28 @@ services:
             - ${HOME}/Docker/Adguard/work:/opt/adguardhome/work
             # Mount the host directory to the container directory for configuration
             - ${HOME}/Docker/Adguard/conf:/opt/adguardhome/conf
-        # Define environment variables for the Docker container
-        #environment:
-        #  - ServerIP=198.168.0.100  # Server IP (Currently commented out)
-        #  - VIRTUAL_PORT=3000  # Virtual port (Currently commented out)
-        #  - TZ=America/Sao_Paulo  # Timezone (Currently commented out)
         ports:
+            # Plain DNS
             - 53:53/tcp
             - 53:53/udp
-            #- "67:67/udp"
+            # Add if you intend to use AdGuard Home as a DHCP server
+            #- 67:67/udp
+            #- 68:68/tcp
+            #- 68:68/udp
+            # Add if you are going to use AdGuard Home's admin panel as well as run AdGuard Home as an HTTPS/DNS-over-HTTPS server
+            #- 80:80/tcp
+            #- 443:443/tcp
+            #- 443:443/udp
             - 3030:3000/tcp
+            # Add if you are going to run AdGuard Home as a DNS-over-TLS server
+            #- 853:853/tcp
+            # Add if you are going to run AdGuard Home as a DNS-over-QUIC server. You may only leave one or two of these
+            #- 784:784/udp
+            #- 853:853/udp
+            #- 8853:8853/udp
+            # add if you are going to run AdGuard Home as a DNSCrypt server
+            #- 5443:5443/tcp
+            #- 5443:5443/udp
         #network_mode: host
         #cap_add:
         #- NET_ADMIN
@@ -48,7 +60,7 @@ services:
             # The number of consecutive health check failures required for the container to be considered unhealthy.
             retries: 6
         # The restart policy of the container. "always" means the container will be restarted regardless of the exit status.
-        restart: always
+        restart: unless-stopped
         networks:
             # The Docker network to which the container will be connected.
             big-net:
