@@ -63,10 +63,10 @@ services:
         restart: unless-stopped
         networks:
             # The Docker network to which the container will be connected.
-            big-net:
+            - adguard-net
             
 networks:
     # Defines the network to be created.
-    big-net:
+    adguard-net:
         # The name to be assigned to the network.
-        name: big-net
+        name: adguard-net
