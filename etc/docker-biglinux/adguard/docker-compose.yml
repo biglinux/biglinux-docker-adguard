@@ -1,6 +1,3 @@
-version: "3.9" # Version of Docker Compose
-
-# Define the services to be created
 services:
     # Name of the service
     adguard:
